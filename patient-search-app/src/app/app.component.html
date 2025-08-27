@@ -1,0 +1,452 @@
+<div class="container">
+  <div class="header">
+    <h1>Hello, Dr. Noori!</h1>
+  </div>
+
+ 
+  <h2 style="font-weight: bold; font-size: 22px; margin: 20px 0; color: #333;">
+    <svg class="search-icon" viewBox="0 0 24 24">
+        <path d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" 
+              stroke="currentColor" stroke-width="1.5" fill="none"/>
+      </svg>
+    Search your patients
+  </h2>
+
+  <div class="search-card">
+  
+    
+    
+    <div class="tabs">
+      <button 
+        class="tab-button" 
+        [class.active]="searchTab === 'basic'"
+        (click)="setSearchTab('basic')">
+        Basic
+      </button>
+      <button 
+        class="tab-button" 
+        [class.active]="searchTab === 'advanced'"
+        (click)="setSearchTab('advanced')">
+        Advanced
+      </button>
+    </div>
+
+    <form (ngSubmit)="searchPatients()" #patientForm="ngForm">
+      
+      
+      <div *ngIf="searchTab === 'basic'">
+        <div class="form-section">
+          <h3 style="font-weight: bold; font-size: 16px;">Patient Info</h3>
+          <div class="form-grid">
+            <div class="form-group">
+              <label style="font-weight: bold; font-size: 12px;">First Name</label>
+              <input 
+                type="text" 
+                class="form-input" 
+                [(ngModel)]="searchForm.firstName" 
+                name="firstName"
+                #firstName="ngModel"
+                placeholder="First Name"
+                pattern="^[a-zA-Z\s\-'\.]{2,50}$"
+                title="First name should contain only letters, spaces, hyphens, apostrophes, and periods (2-50 characters)"
+                (input)="onInputChange()"
+                [class.invalid]="firstName.invalid && firstName.touched">
+              <div *ngIf="firstName.invalid && firstName.touched" class="error-message">
+                Please enter a valid first name (letters, spaces, hyphens, apostrophes only, 2-50 characters)
+              </div>
+            </div>
+            <div class="form-group">
+              <label style="font-weight: bold; font-size: 12px;">Last Name</label>
+              <input 
+                type="text" 
+                class="form-input" 
+                [(ngModel)]="searchForm.lastName" 
+                name="lastName"
+                #lastName="ngModel"
+                placeholder="Last Name"
+                pattern="^[a-zA-Z\s\-'\.]{2,50}$"
+                title="Last name should contain only letters, spaces, hyphens, apostrophes, and periods (2-50 characters)"
+                (input)="onInputChange()"
+                [class.invalid]="lastName.invalid && lastName.touched">
+              <div *ngIf="lastName.invalid && lastName.touched" class="error-message">
+                Please enter a valid last name (letters, spaces, hyphens, apostrophes only, 2-50 characters)
+              </div>
+            </div>
+            <div class="form-group">
+              <label style="font-weight: bold; font-size: 12px;">Date of Birth</label>
+              <div class="date-input-wrapper">
+                <input 
+                  type="text" 
+                  class="form-input" 
+                  [(ngModel)]="searchForm.dateOfBirth" 
+                  name="dateOfBirth"
+                  #dateOfBirth="ngModel"
+                  placeholder="MM/DD/YYYY"
+                  pattern="^(0[1-9]|1[0-2])\/(0[1-9]|[12][0-9]|3[01])\/\d{4}$"
+                  title="Date format should be MM/DD/YYYY (e.g., 01/15/1990)"
+                  maxlength="10"
+                  (input)="formatDateInput($event); onInputChange()"
+                  [class.invalid]="dateOfBirth.invalid && dateOfBirth.touched">
+                <svg class="calendar-icon" viewBox="0 0 24 24">
+                  <path d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5" stroke="currentColor" stroke-width="1.5" fill="none"/>
+                </svg>
+              </div>
+              <div *ngIf="dateOfBirth.invalid && dateOfBirth.touched" class="error-message">
+                Please enter a valid date in MM/DD/YYYY format
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-section">
+          <h3 style="font-weight: bold; font-size: 16px;">Appointment Range</h3>
+          <div class="form-grid">
+            <div class="form-group">
+              <label style="font-weight: bold; font-size: 12px;">Start Date</label>
+              <div class="date-input-wrapper">
+                <input 
+                  type="text" 
+                  class="form-input" 
+                  [(ngModel)]="searchForm.startDate" 
+                  name="startDate"
+                  #startDate="ngModel"
+                  placeholder="MM/DD/YYYY"
+                  pattern="^(0[1-9]|1[0-2])\/(0[1-9]|[12][0-9]|3[01])\/\d{4}$"
+                  title="Date format should be MM/DD/YYYY (e.g., 01/15/2024)"
+                  maxlength="10"
+                  (input)="formatDateInput($event)"
+                  [class.invalid]="startDate.invalid && startDate.touched">
+                <svg class="calendar-icon" viewBox="0 0 24 24">
+                  <path d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5" stroke="currentColor" stroke-width="1.5" fill="none"/>
+                </svg>
+              </div>
+              <div *ngIf="startDate.invalid && startDate.touched" class="error-message">
+                Please enter a valid date in MM/DD/YYYY format
+              </div>
+            </div>
+            <div class="form-group">
+              <label style="font-weight: bold; font-size: 12px;">End Date</label>
+              <div class="date-input-wrapper">
+                <input 
+                  type="text" 
+                  class="form-input" 
+                  [(ngModel)]="searchForm.endDate" 
+                  name="endDate"
+                  #endDate="ngModel"
+                  placeholder="MM/DD/YYYY"
+                  pattern="^(0[1-9]|1[0-2])\/(0[1-9]|[12][0-9]|3[01])\/\d{4}$"
+                  title="Date format should be MM/DD/YYYY (e.g., 12/31/2024)"
+                  maxlength="10"
+                  (input)="formatDateInput($event)"
+                  [class.invalid]="endDate.invalid && endDate.touched">
+                <svg class="calendar-icon" viewBox="0 0 24 24">
+                  <path d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5" stroke="currentColor" stroke-width="1.5" fill="none"/>
+                </svg>
+              </div>
+              <div *ngIf="endDate.invalid && endDate.touched" class="error-message">
+                Please enter a valid date in MM/DD/YYYY format
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      
+      <div *ngIf="searchTab === 'advanced'">
+        <div class="form-section">
+          <h3 style="font-weight: bold; font-size: 16px;">Patient Identifiers</h3>
+          <div class="form-grid">
+            <div class="form-group">
+              <label style="font-weight: bold; font-size: 12px;">MRN</label>
+              <input 
+                type="text" 
+                class="form-input" 
+                [(ngModel)]="searchForm.mrn" 
+                name="mrn"
+                placeholder="Medical Record Number"
+                (input)="onInputChange()">
+            </div>
+            <div class="form-group">
+              <label style="font-weight: bold; font-size: 12px;">ID Number</label>
+              <input 
+                type="text" 
+                class="form-input" 
+                [(ngModel)]="searchForm.idNumber" 
+                name="idNumber"
+                placeholder="Patient ID Number"
+                (input)="onInputChange()">
+            </div>
+            <div class="form-group">
+              <label style="font-weight: bold; font-size: 12px;">Last 4 SSN</label>
+              <input 
+                type="text" 
+                class="form-input" 
+                [(ngModel)]="searchForm.lastFourSSN" 
+                name="lastFourSSN"
+                placeholder="0000"
+                maxlength="4"
+                pattern="^\d{4}$"
+                (input)="onInputChange()">
+            </div>
+          </div>
+        </div>
+
+        <div class="form-section">
+          <h3 style="font-weight: bold; font-size: 16px;">Contact Information</h3>
+          <div class="form-grid">
+            <div class="form-group">
+              <label style="font-weight: bold; font-size: 12px;">Phone Number</label>
+              <input 
+                type="text" 
+                class="form-input" 
+                [(ngModel)]="searchForm.phoneNumber" 
+                name="phoneNumber"
+                placeholder="(000)-000-0000"
+                (input)="formatPhoneInput($event); onInputChange()">
+            </div>
+            <div class="form-group">
+              <label style="font-weight: bold; font-size: 12px;">Email Address</label>
+              <input 
+                type="email" 
+                class="form-input" 
+                [(ngModel)]="searchForm.emailAddress" 
+                name="emailAddress"
+                placeholder="patient@email.com"
+                (input)="onInputChange()">
+            </div>
+            <div class="form-group">
+              <label style="font-weight: bold; font-size: 12px;">Residence</label>
+              <input 
+                type="text" 
+                class="form-input" 
+                [(ngModel)]="searchForm.residence" 
+                name="residence"
+                placeholder="City, State"
+                (input)="onInputChange()">
+            </div>
+          </div>
+        </div>
+
+        <div class="form-section">
+          <h3 style="font-weight: bold; font-size: 16px;">Medical Information</h3>
+          <div class="form-grid">
+            <div class="form-group">
+              <label style="font-weight: bold; font-size: 12px;">Sex</label>
+              <select 
+                class="form-input" 
+                [(ngModel)]="searchForm.sex" 
+                name="sex"
+                (change)="onInputChange()">
+                <option value="">Select Sex</option>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label style="font-weight: bold; font-size: 12px;">Hospital</label>
+              <input 
+                type="text" 
+                class="form-input" 
+                [(ngModel)]="searchForm.hospital" 
+                name="hospital"
+                placeholder="Hospital Name"
+                (input)="onInputChange()">
+            </div>
+            <div class="form-group">
+              <label style="font-weight: bold; font-size: 12px;">Department</label>
+              <input 
+                type="text" 
+                class="form-input" 
+                [(ngModel)]="searchForm.dept" 
+                name="dept"
+                placeholder="Department"
+                (input)="onInputChange()">
+            </div>
+            <div class="form-group">
+              <label style="font-weight: bold; font-size: 12px;">Physician</label>
+              <input 
+                type="text" 
+                class="form-input" 
+                [(ngModel)]="searchForm.physician" 
+                name="physician"
+                placeholder="Dr. Name"
+                (input)="onInputChange()">
+            </div>
+            <div class="form-group" style="grid-column: 1 / -1;">
+              <label style="font-weight: bold; font-size: 12px;">Conditions</label>
+              <input 
+                type="text" 
+                class="form-input" 
+                [(ngModel)]="searchForm.conditions" 
+                name="conditions"
+                placeholder="e.g., CHF, COPD, Diabetes"
+                (input)="onInputChange()">
+            </div>
+          </div>
+        </div>
+
+        
+
+        <div class="form-section">
+          <h3 style="font-weight: bold; font-size: 16px;">Appointment Range</h3>
+          <div class="form-grid">
+            <div class="form-group">
+              <label style="font-weight: bold; font-size: 12px;">Start Date</label>
+              <div class="date-input-wrapper">
+                <input 
+                  type="text" 
+                  class="form-input" 
+                  [(ngModel)]="searchForm.startDate" 
+                  name="advancedStartDate"
+                  placeholder="MM/DD/YYYY"
+                  maxlength="10"
+                  (input)="formatDateInput($event)">
+                <svg class="calendar-icon" viewBox="0 0 24 24">
+                  <path d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5" stroke="currentColor" stroke-width="1.5" fill="none"/>
+                </svg>
+              </div>
+            </div>
+            <div class="form-group">
+              <label style="font-weight: bold; font-size: 12px;">End Date</label>
+              <div class="date-input-wrapper">
+                <input 
+                  type="text" 
+                  class="form-input" 
+                  [(ngModel)]="searchForm.endDate" 
+                  name="advancedEndDate"
+                  placeholder="MM/DD/YYYY"
+                  maxlength="10"
+                  (input)="formatDateInput($event)">
+                <svg class="calendar-icon" viewBox="0 0 24 24">
+                  <path d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5" stroke="currentColor" stroke-width="1.5" fill="none"/>
+                </svg>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="search-actions">
+        <button 
+          type="button" 
+          class="clear-button" 
+          (click)="clearForm()">
+          Clear All
+        </button>
+        <button 
+          type="submit" 
+          class="search-button">
+          Search
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <div class="results-card">
+    <div class="results-tabs">
+      <button 
+        class="results-tab" 
+        [class.active]="activeTab === 'today'" 
+        (click)="setActiveTab('today')">
+        <svg class="search-icon" viewBox="0 0 24 24">
+          <path d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5" stroke="currentColor" stroke-width="1.5" fill="none"/>
+        </svg>
+        Today's patients ({{patients.length}})
+      </button>
+      <button 
+        class="results-tab" 
+        [class.active]="activeTab === 'results'" 
+        (click)="setActiveTab('results')">
+        <svg class="search-icon" viewBox="0 0 24 24">
+          <path d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" stroke="currentColor" stroke-width="1.5" fill="none"/>
+        </svg>
+        Search results ({{patients.length}})
+      </button>
+    </div>
+
+    <div class="patient-list">
+      <div 
+        *ngIf="patients.length === 0" 
+        class="no-results">
+        <p>No patients found matching your search criteria.</p>
+      </div>
+      <div 
+        class="patient-item" 
+        *ngFor="let patient of patients; let i = index" 
+        [class.highlighted]="i === 0" 
+        (click)="selectPatient(patient)">
+        <div class="patient-header">
+          <div class="patient-info">
+            <div class="patient-avatar">
+              <svg class="user-icon" viewBox="0 0 24 24">
+                <path d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" fill="currentColor"/>
+              </svg>
+            </div>
+            <div class="patient-details">
+              <div class="patient-name">{{patient.name}}</div>
+              <div class="patient-data">
+                <div class="data-row">
+                  <span class="data-label">DOB</span>
+                  <span class="data-value">{{patient.dob}}</span>
+                </div>
+                <div class="data-row">
+                  <span class="data-label">ID Number</span>
+                  <span class="data-value">{{patient.idNumber}}</span>
+                </div>
+                <div class="data-row">
+                  <span class="data-label">Hospital</span>
+                  <span class="data-value">{{patient.hospital}}</span>
+                </div>
+                <div class="data-row">
+                  <span class="data-label">Sex</span>
+                  <span class="data-value">{{patient.sex}}</span>
+                </div>
+                <div class="data-row">
+                  <span class="data-label">Last 4 Digits of SSN</span>
+                  <span class="data-value">{{patient.lastFourSSN}}</span>
+                </div>
+                <div class="data-row">
+                  <span class="data-label">Dept.</span>
+                  <span class="data-value">{{patient.dept}}</span>
+                </div>
+                <div class="data-row">
+                  <span class="data-label">Residence</span>
+                  <span class="data-value">{{patient.residence}}</span>
+                </div>
+                <div class="data-row">
+                  <span class="data-label">Phone Number</span>
+                  <span class="data-value">{{patient.phoneNumber}}</span>
+                </div>
+                <div class="data-row">
+                  <span class="data-label">Physician</span>
+                  <span class="data-value">{{patient.physician}}</span>
+                </div>
+                <div class="data-row">
+                  <span class="data-label">MRN</span>
+                  <span class="data-value">{{patient.mrn}}</span>
+                </div>
+                <div class="data-row">
+                  <span class="data-label">Email Address</span>
+                  <span class="data-value">{{patient.emailAddress}}</span>
+                </div>
+                <div class="data-row">
+                  <span class="data-label">Conditions</span>
+                  <span class="data-value">{{patient.conditions}}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="appointment-info">
+            <div class="appointment-details">
+              <div class="appointment-label">Next Appointment</div>
+              <div class="appointment-time">{{patient.nextAppointment}}</div>
+            </div>
+            <svg class="chevron-icon" viewBox="0 0 24 24">
+              <path d="m8.25 4.5 7.5 7.5-7.5 7.5" stroke="currentColor" stroke-width="1.5" fill="none"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
